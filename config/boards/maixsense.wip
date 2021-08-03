@@ -1,0 +1,9 @@
+# Allwinner R329 dual core 256M RAM WiFi USB-C
+BOARD_NAME="MaixSense"
+BOARDFAMILY="sun50iw11"
+BOOTCONFIG="sipeed_maixsense_defconfig"
+MODULES_BLACKLIST="lima"
+DEFAULT_CONSOLE="serial"
+BUILD_DESKTOP="no"
+SERIALCON="ttyS0"
+KERNEL_TARGET="edge"
