@@ -148,8 +148,8 @@ fi
 # Check for Vagrant
 if [[ "${1}" == vagrant && -z "$(command -v vagrant)" ]]; then
 	display_alert "Vagrant not installed." "Installing"
-	sudo apt-get update
-	sudo apt-get install -y vagrant virtualbox
+	sudo apt-get -o Acquire-by-hash=yes --fix-missing  update
+	sudo apt-get -o Acquire-by-hash=yes --fix-missing  install -y vagrant virtualbox
 fi
 
 # Purge Armbian Docker images
@@ -188,8 +188,8 @@ if [[ "${1}" == docker && -f /etc/debian_version && -z "$(command -v docker)" ]]
 
 	curl -fsSL "https://download.docker.com/linux/${codeid}/gpg" | apt-key add -qq - > /dev/null 2>&1
 	export DEBIAN_FRONTEND=noninteractive
-	apt-get update
-	apt-get install -y -qq --no-install-recommends ${DOCKER_BINARY}
+	apt-get -o Acquire-by-hash=yes --fix-missing  update
+	apt-get -o Acquire-by-hash=yes --fix-missing  install -y -qq --no-install-recommends ${DOCKER_BINARY}
 	display_alert "Add yourself to docker group to avoid root privileges" "" "wrn"
 	"${SRC}/compile.sh" "$@"
 	exit $?

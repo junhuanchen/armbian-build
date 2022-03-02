@@ -11,7 +11,7 @@ setenv verbosity "1"
 setenv rootfstype "ext4"
 setenv console "both"
 setenv docker_optimizations "on"
-setenv bootlogo "false"
+setenv bootlogo "true"
 
 # Print boot source
 itest.b *0x100028 == 0x00 && echo "U-boot loaded from SD"

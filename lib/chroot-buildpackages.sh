@@ -167,7 +167,7 @@ chroot_build_packages()
 			local t=$target_dir/root/.update-timestamp
 			if [[ ! -f ${t} || $(( ($(date +%s) - $(<"${t}")) / 86400 )) -gt 7 ]]; then
 				display_alert "Upgrading packages" "$release/$arch" "info"
-				systemd-nspawn -a -q -D "${target_dir}" /bin/bash -c "apt-get -q update; apt-get -q -y upgrade; apt-get clean"
+				systemd-nspawn -a -q -D "${target_dir}" /bin/bash -c "apt-get -o Acquire-by-hash=yes --fix-missing  -q update; apt-get -o Acquire-by-hash=yes --fix-missing  -q -y upgrade; apt-get -o Acquire-by-hash=yes --fix-missing  clean"
 				date +%s > "${t}"
 			fi
 
@@ -282,8 +282,8 @@ create_build_script ()
 
 		if [[ \${#deps[@]} -gt 0 ]]; then
 			display_alert "Installing build dependencies"
-			apt-get -y -q update
-			apt-get -y -q \
+			apt-get -o Acquire-by-hash=yes --fix-missing  -y -q update
+			apt-get -o Acquire-by-hash=yes --fix-missing  -y -q \
 					--no-install-recommends \
 					--show-progress \
 					-o DPKG::Progress-Fancy=1 install "\${deps[@]}"
@@ -381,17 +381,17 @@ chroot_installpackages()
 	cat <<-EOF > "${SDCARD}"/tmp/install.sh
 	#!/bin/bash
 	[[ "$remote_only" != yes ]] && apt-key add /tmp/buildpkg.key
-	apt-get ${apt_extra} -q update
+	apt-get -o Acquire-by-hash=yes --fix-missing  ${apt_extra} -q update
 	# uncomment to debug
 	# /bin/bash
 	# TODO: check if package exists in case new config was added
 	#if [[ -n "$remote_only" == yes ]]; then
 	#	for p in ${install_list}; do
 	#		if grep -qE "apt.armbian.com|localhost" <(apt-cache madison \$p); then
-	#		if apt-get -s -qq install \$p; then
+	#		if apt-get -o Acquire-by-hash=yes --fix-missing  -s -qq install \$p; then
 	#fi
-	apt-get -q ${apt_extra} --show-progress -o DPKG::Progress-Fancy=1 install -y ${install_list}
-	apt-get clean
+	apt-get -o Acquire-by-hash=yes --fix-missing  -q ${apt_extra} --show-progress -o DPKG::Progress-Fancy=1 install -y ${install_list}
+	apt-get -o Acquire-by-hash=yes --fix-missing  clean
 	[[ "${remote_only}" != yes ]] && apt-key del "925644A6"
 	rm /etc/apt/sources.list.d/armbian-temp.list 2>/dev/null
 	rm /etc/apt/preferences.d/90-armbian-temp.pref 2>/dev/null

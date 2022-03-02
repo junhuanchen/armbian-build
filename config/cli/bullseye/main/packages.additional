@@ -16,3 +16,13 @@ resolvconf
 sysstat
 wget
 wireless-tools
+libpython3-dev
+libzbar-dev
+libzbar0
+libaom0
+libopencv-dev
+python3-pip
+python3-serial
+python3-pillow
+python3-numpy
+gcc

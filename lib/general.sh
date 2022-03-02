@@ -601,7 +601,7 @@ display_alert "Building kernel splash logo" "$RELEASE" "info"
 	--blob "${SDCARD}"/tmp/throbber73.rgb \
 	--blob "${SDCARD}"/tmp/throbber74.rgb \
 	"${SDCARD}"/lib/firmware/bootsplash.armbian >/dev/null 2>&1
-	if [[ $BOOT_LOGO == yes || $BOOT_LOGO == desktop && $BUILD_DESKTOP == yes ]]; then
+	if [[ $BOOT_LOGO == yes || $BOOT_LOGO == desktop ]]; then
 		[[ -f "${SDCARD}"/boot/armbianEnv.txt ]] &&	grep -q '^bootlogo' "${SDCARD}"/boot/armbianEnv.txt && \
 		sed -i 's/^bootlogo.*/bootlogo=true/' "${SDCARD}"/boot/armbianEnv.txt || echo 'bootlogo=true' >> "${SDCARD}"/boot/armbianEnv.txt
 		[[ -f "${SDCARD}"/boot/boot.ini ]] &&	sed -i 's/^setenv bootlogo.*/setenv bootlogo "true"/' "${SDCARD}"/boot/boot.ini
@@ -986,8 +986,8 @@ prepare_host_basic()
 	# We will check one package and install the entire list.
 	if [[ $(dpkg-query -W -f='${db:Status-Abbrev}\n' dialog 2>/dev/null) != *ii* ]]; then
 		display_alert "Installing basic packages" "$checklist"
-		apt-get -qq update && \
-		apt-get install -qq -y --no-install-recommends $checklist
+		apt-get -o Acquire-by-hash=yes --fix-missing  -qq update && \
+		apt-get -o Acquire-by-hash=yes --fix-missing  install -qq -y --no-install-recommends $checklist
 	fi
 }
 
@@ -1153,9 +1153,9 @@ prepare_host()
 
 	if [[ ${#deps[@]} -gt 0 ]]; then
 		display_alert "Installing build dependencies"
-		apt-get -q update
-		apt-get -y upgrade
-		apt-get -q -y --no-install-recommends install -o Dpkg::Options::='--force-confold' "${deps[@]}" | tee -a "${DEST}"/${LOG_SUBPATH}/hostdeps.log
+		apt-get -o Acquire-by-hash=yes --fix-missing  -q update
+		apt-get -o Acquire-by-hash=yes --fix-missing  -y upgrade
+		apt-get -o Acquire-by-hash=yes --fix-missing  -q -y --no-install-recommends install -o Dpkg::Options::='--force-confold' "${deps[@]}" | tee -a "${DEST}"/${LOG_SUBPATH}/hostdeps.log
 		update-ccache-symlinks
 	fi
 
@@ -1169,7 +1169,7 @@ prepare_host()
   if [[ $(dpkg --print-architecture) == amd64 ]]; then
 
 	if [[ $(dpkg-query -W -f='${db:Status-Abbrev}\n' 'zlib1g:i386' 2>/dev/null) != *ii* ]]; then
-		apt-get install -qq -y --no-install-recommends zlib1g:i386 >/dev/null 2>&1
+		apt-get -o Acquire-by-hash=yes --fix-missing  install -qq -y --no-install-recommends zlib1g:i386 >/dev/null 2>&1
 	fi
 
 # build aarch64
